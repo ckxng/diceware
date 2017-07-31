@@ -27,10 +27,10 @@ risk.
       var num = flag.Int("d", 8, "number of dice")
       flag.Parse();
       dice := diceware.New()
-      if result, err := dice.Generate(\*num); err == nil {
-        fmt.Printf("%s\\n", result)
+      if result, err := dice.Generate(*num); err == nil {
+        fmt.Printf("%s\n", result)
       } else {
-        fmt.Printf("error: %s\\n", err)
+        fmt.Printf("error: %s\n", err)
       }
     }
 
