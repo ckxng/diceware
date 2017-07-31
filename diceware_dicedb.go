@@ -43,13 +43,32 @@ func (dice *diceDB) Generate(words int) (string, error) {
 // rand5 uses crypto.rand to roll 5 dice and returns a string of 5 numbers.
 func (dice *diceDB) rand5() (string, error) {
   var roll5 bytes.Buffer
+
+  // go roll a bunch of dice, and we'll get back to that later
+  // this isn't actually efficient
+  cerr := make(chan error)
+  croll := make(chan int)
   for i := 0; i < 5; i++ {
-    if roll, err := rand.Int(rand.Reader, big.NewInt(6)); err == nil {
-      roll5.WriteString(strconv.Itoa((int(roll.Uint64())+1)))
-    } else {
+    go func() {
+      if roll, err := rand.Int(rand.Reader, big.NewInt(6)); err == nil {
+        croll <- int(roll.Uint64()+1)
+      } else {
+        cerr <- err
+      }
+    }()
+  }
+
+  // get the dice and record the results
+  for i := 0; i < 5; {
+    select {
+    case roll := <- croll:
+      roll5.WriteString(strconv.Itoa(roll))
+      i++
+    case err := <- cerr:
       return "", err
     }
   }
+
   return roll5.String(), nil
 }
 
