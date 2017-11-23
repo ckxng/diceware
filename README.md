@@ -1,3 +1,5 @@
+!(Travis CI Build Status)[https://travis-ci.org/ckxng/diceware.svg?branch=master]
+
 # Name
 
 `diceware`
